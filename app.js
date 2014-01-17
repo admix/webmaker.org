@@ -266,10 +266,15 @@ var middleware = require("./lib/middleware");
 
 app.get("/healthcheck", routes.api.healthcheck);
 
-app.get("/", routes.gallery({
-  layout: "teachtheweb",
-  prefix: "frontpage",
-  limit: 10
+app.get("/", 
+  middleware.addCSP({ //added CSP
+    detailsHost: env.get("WEBMAKERORG"),
+    profileHost: env.get("PROFILE_URL")
+  }),
+  routes.gallery({
+    layout: "teachtheweb",
+    prefix: "frontpage",
+    limit: 10
 }));
 
 app.get("/gallery", routes.gallery({
