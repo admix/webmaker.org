@@ -12,7 +12,8 @@
   <title>{% block title %}{% endblock %} - {{ gettext("Mozilla Webmaker") }}</title>
   {% block css %}{% endblock %}
   <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ loginAPI }}/css/nav.css">
+  <!--<link rel="stylesheet" href="{{ loginAPI }}/css/nav.css">-->
+  <link rel="stylesheet" href="/css/nav.css">
   <link rel="stylesheet" href="/css/style.css">
 
   <!--[if lte IE 9]><link rel="stylesheet" href="/css/warning.css"><![endif]-->
@@ -212,12 +213,12 @@
 </script>
 
 <script src="{{ personaSSO }}/sso/include.js"></script>
-<!--<script>
+<script>
 // XXX: we need to load this after require loads jquery, but can't hard-code a path
 // in the require config.
-//window.__loginAPI = "{{ loginAPI }}";
-</script>-->
-<script src="../public/js/pages/layout.js" async></script>
+window.__loginAPI = "{{ loginAPI }}";
+</script>
+<script src="/js/pages/layout.js" async></script>
 <script id="require-js" src="/bower/requirejs/require.js"
   data-main="{% block require_main %}/js/main.js{% endblock %}"
   data-page="{% block require_page %}{% endblock %}">
@@ -226,21 +227,20 @@
 {% block scripts %}{% endblock %}
 
 {% if ga_account %}
-<script src="../public/js/pages/layout.js" async></script>
-<!--<script type="text/javascript">
-  // var _gaq = _gaq || [];
-  // _gaq.push(['_setAccount', '{{ ga_account }}']);
-  // {% if ga_domain %}
-  // _gaq.push(['_setDomainName', '{{ ga_domain }}']);
-  // {% endif %}
-  // _gaq.push(['_trackPageview']);
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', '{{ ga_account }}']);
+  {% if ga_domain %}
+  _gaq.push(['_setDomainName', '{{ ga_domain }}']);
+  {% endif %}
+  _gaq.push(['_trackPageview']);
 
-  // (function() {
-  //   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  //   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  //   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  // })();
-</script>-->
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
 {% endif %}
 
 </body>
