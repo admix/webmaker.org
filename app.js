@@ -271,6 +271,7 @@ app.get("/",
     detailsHost: env.get("WEBMAKERORG"),
     profileHost: env.get("PROFILE_URL")
   }),
+  //middleware.removeCSP,
   routes.gallery({
     layout: "teachtheweb",
     prefix: "frontpage",
