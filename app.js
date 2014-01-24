@@ -107,14 +107,14 @@ if (env.get("ENABLE_GELF_LOGS")) {
 }
 
 app.use(helmet.iexss());
-app.use(helmet.contentTypeOptions(),middleware.addCSP());
+app.use(helmet.contentTypeOptions());
 
 if ( !! env.get("FORCE_SSL")) {
-  app.use(helmet.hsts(),middleware.addCSP());
+  app.use(helmet.hsts());
   app.enable("trust proxy");
 }
 
-app.use(middleware.addCSP(),function (req, res, next) {
+app.use(function (req, res, next) {
   var guard = domain.create();
   guard.add(req);
   guard.add(res);
@@ -172,9 +172,9 @@ app.use(middleware.addCSP(),function (req, res, next) {
   guard.run(next);
 });
 
-app.use(express.compress(),middleware.addCSP());
-app.use(express.static(WWW_ROOT),middleware.addCSP());
-app.use("/bower", express.static(path.join(__dirname, "bower_components")),middleware.addCSP());
+app.use(express.compress());
+app.use(express.static(WWW_ROOT));
+app.use("/bower", express.static(path.join(__dirname, "bower_components")));
 
 // Setup locales with i18n
 app.use(i18n.middleware({
@@ -182,11 +182,11 @@ app.use(i18n.middleware({
   default_lang: "en-US",
   mappings: require("webmaker-locale-mapping"),
   translation_directory: path.resolve(__dirname, "locale")
-}),middleware.addCSP());
+}));
 
-app.use(express.json(),middleware.addCSP());
-app.use(express.urlencoded(),middleware.addCSP());
-app.use(express.cookieParser(),middleware.addCSP());
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.cookieParser());
 app.use(express.cookieSession({
   key: "webmaker.sid",
   secret: env.get("SESSION_SECRET"),
@@ -195,8 +195,8 @@ app.use(express.cookieSession({
     secure: !! env.get("FORCE_SSL")
   },
   proxy: true
-}),middleware.addCSP());
-app.use(express.csrf(),middleware.addCSP());
+}));
+app.use(express.csrf());
 
 app.locals({
   makeEndpoint: env.get("MAKE_ENDPOINT"),
@@ -210,7 +210,7 @@ app.locals({
   flags: env.get("FLAGS") || {}
 });
 
-app.use(middleware.addCSP(),function (req, res, next) {
+app.use(function (req, res, next) {
   res.locals({
     email: req.session.email || '',
     username: req.session.username || '',
@@ -236,23 +236,25 @@ app.use(lessMiddleWare({
   yuicompress: optimize,
   optimization: optimize ? 0 : 2,
   sourceMap: !optimize
-}),middleware.addCSP());
-app.use(express.static(tmpDir),middleware.addCSP());
+}));
+app.use(express.static(tmpDir));
 
 // Nunjucks
 // This just uses nunjucks-dev for now -- middleware to handle compiling templates in progress
-app.use("/views", express.static(path.join(__dirname, "views")),middleware.addCSP());
+app.use("/views", express.static(path.join(__dirname, "views")));
 
-app.use(app.router,middleware.addCSP());
+app.use(middleware.addCSP()); //adding Content Security Policy (CSP) to webmaker.org
+
+app.use(app.router);
 // We've run out of known routes, 404
-app.use(middleware.addCSP(),function (req, res, next) {
+app.use(function (req, res, next) {
   res.status(404);
   res.render('error.html', {
     code: 404
   });
 });
 // Final error-handling middleware
-app.use(middleware.addCSP(),function (err, req, res, next) {
+app.use(function (err, req, res, next) {
   if (typeof err === "string") {
     console.error("You're passing a string into next(). Go fix this: %s", err);
   }
