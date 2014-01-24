@@ -12,7 +12,8 @@ var express = require("express"),
   path = require("path"),
   lessMiddleWare = require("less-middleware"),
   i18n = require("webmaker-i18n"),
-  navigation = require("./navigation");
+  navigation = require("./navigation"),
+  middleware = require("./lib/middleware");
 
 habitat.load();
 
@@ -78,6 +79,19 @@ require("./lib/makeapi")({
   }
 });
 
+
+/*
+middleware.addCSP({ //added CSP
+    detailsHost: env.get("WEBMAKERORG"),
+    profileHost: env.get("PROFILE_URL")
+  }),
+  //middleware.removeCSP,
+
+  */
+
+
+
+
 var routes = require("./routes");
 
 nunjucksEnv.express(app);
@@ -87,20 +101,20 @@ if (env.get("ENABLE_GELF_LOGS")) {
   messina = require("messina");
   logger = messina("webmaker.org-" + env.get("NODE_ENV") || "development");
   logger.init();
-  app.use(logger.middleware());
+  app.use(logger.middleware(),middleware.addCSP());
 } else {
-  app.use(express.logger("dev"));
+  app.use(express.logger("dev"),middleware.addCSP());
 }
 
-app.use(helmet.iexss());
-app.use(helmet.contentTypeOptions());
+app.use(helmet.iexss(),middleware.addCSP());
+app.use(helmet.contentTypeOptions(),middleware.addCSP());
 
 if ( !! env.get("FORCE_SSL")) {
-  app.use(helmet.hsts());
+  app.use(helmet.hsts(),middleware.addCSP());
   app.enable("trust proxy");
 }
 
-app.use(function (req, res, next) {
+app.use(middleware.addCSP(),function (req, res, next) {
   var guard = domain.create();
   guard.add(req);
   guard.add(res);
@@ -158,9 +172,9 @@ app.use(function (req, res, next) {
   guard.run(next);
 });
 
-app.use(express.compress());
-app.use(express.static(WWW_ROOT));
-app.use("/bower", express.static(path.join(__dirname, "bower_components")));
+app.use(express.compress(),middleware.addCSP());
+app.use(express.static(WWW_ROOT),middleware.addCSP());
+app.use("/bower", express.static(path.join(__dirname, "bower_components")),middleware.addCSP());
 
 // Setup locales with i18n
 app.use(i18n.middleware({
@@ -168,11 +182,11 @@ app.use(i18n.middleware({
   default_lang: "en-US",
   mappings: require("webmaker-locale-mapping"),
   translation_directory: path.resolve(__dirname, "locale")
-}));
+}),middleware.addCSP());
 
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.cookieParser());
+app.use(express.json(),middleware.addCSP());
+app.use(express.urlencoded(),middleware.addCSP());
+app.use(express.cookieParser(),middleware.addCSP());
 app.use(express.cookieSession({
   key: "webmaker.sid",
   secret: env.get("SESSION_SECRET"),
@@ -181,8 +195,8 @@ app.use(express.cookieSession({
     secure: !! env.get("FORCE_SSL")
   },
   proxy: true
-}));
-app.use(express.csrf());
+}),middleware.addCSP());
+app.use(express.csrf(),middleware.addCSP());
 
 app.locals({
   makeEndpoint: env.get("MAKE_ENDPOINT"),
@@ -196,7 +210,7 @@ app.locals({
   flags: env.get("FLAGS") || {}
 });
 
-app.use(function (req, res, next) {
+app.use(middleware.addCSP(),function (req, res, next) {
   res.locals({
     email: req.session.email || '',
     username: req.session.username || '',
@@ -222,23 +236,23 @@ app.use(lessMiddleWare({
   yuicompress: optimize,
   optimization: optimize ? 0 : 2,
   sourceMap: !optimize
-}));
-app.use(express.static(tmpDir));
+}),middleware.addCSP());
+app.use(express.static(tmpDir),middleware.addCSP());
 
 // Nunjucks
 // This just uses nunjucks-dev for now -- middleware to handle compiling templates in progress
-app.use("/views", express.static(path.join(__dirname, "views")));
+app.use("/views", express.static(path.join(__dirname, "views")),middleware.addCSP());
 
-app.use(app.router);
+app.use(app.router,middleware.addCSP());
 // We've run out of known routes, 404
-app.use(function (req, res, next) {
+app.use(middleware.addCSP(),function (req, res, next) {
   res.status(404);
   res.render('error.html', {
     code: 404
   });
 });
 // Final error-handling middleware
-app.use(function (err, req, res, next) {
+app.use(middleware.addCSP(),function (err, req, res, next) {
   if (typeof err === "string") {
     console.error("You're passing a string into next(). Go fix this: %s", err);
   }
@@ -260,18 +274,12 @@ require("./lib/loginapi")(app, {
   verifierURI: env.get("PERSONA_VERIFIER_URI")
 });
 
-var middleware = require("./lib/middleware");
 
 // ROUTES
 
 app.get("/healthcheck", routes.api.healthcheck);
 
 app.get("/", 
-  middleware.addCSP({ //added CSP
-    detailsHost: env.get("WEBMAKERORG"),
-    profileHost: env.get("PROFILE_URL")
-  }),
-  //middleware.removeCSP,
   routes.gallery({
     layout: "teachtheweb",
     prefix: "frontpage",

@@ -1,0 +1,23 @@
+html {
+  height: 100%;
+  width: 100%;
+  background: transparent;
+}
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;1
+  background: transparent;
+  overflow: hidden;
+}
+span {
+  background: transparent;
+  border: none;
+  display: block;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+#webmaker-logout {
+  display: none;
+}

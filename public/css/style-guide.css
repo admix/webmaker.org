@@ -1,0 +1,21 @@
+h1.style-guide {
+  font-size: 2em;
+  margin-bottom: 1em;
+  border-bottom: 1px dotted #999;
+  line-height: 2em;
+}
+h2.style-guide {
+  font-size: 1.6em;
+  margin-bottom: 0.5em;
+}
+section.style-guide section {
+  margin-bottom: 2em;
+}
+ul.colors {
+  list-style: none;
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+ul.colors li {
+  padding: 20px 10px;
+}
