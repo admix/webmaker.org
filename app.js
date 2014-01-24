@@ -101,12 +101,12 @@ if (env.get("ENABLE_GELF_LOGS")) {
   messina = require("messina");
   logger = messina("webmaker.org-" + env.get("NODE_ENV") || "development");
   logger.init();
-  app.use(logger.middleware(),middleware.addCSP());
+  app.use(logger.middleware());
 } else {
-  app.use(express.logger("dev"),middleware.addCSP());
+  app.use(express.logger("dev"));
 }
 
-app.use(helmet.iexss(),middleware.addCSP());
+app.use(helmet.iexss());
 app.use(helmet.contentTypeOptions(),middleware.addCSP());
 
 if ( !! env.get("FORCE_SSL")) {
