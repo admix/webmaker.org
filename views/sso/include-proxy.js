@@ -11,9 +11,6 @@ function proxyPersona(source, type) {
       case "sso_onlogin":
         payload.data.assertion = arg;
         break;
-      default:
-
-        break;
     }
     source.postMessage(JSON.stringify(payload), "*");
   }
