@@ -48,11 +48,13 @@ function setupLoginButton(loginButton, logoutButton) {
 window.addEventListener("message", function onMessage(event) {
   window.removeEventListener("message", onMessage, false);
   
-  //wrap with try...catch
-  var payload = JSON.parse(event.data),
-      loginButton = document.getElementById("webmaker-login"),
-      logoutButton = document.getElementById("webmaker-logout");
-
+  try{
+    var payload = JSON.parse(event.data),
+        loginButton = document.getElementById("webmaker-login"),
+        logoutButton = document.getElementById("webmaker-logout");
+  } catch(err){
+    return;
+  }
   function showLogin() {
     if (!loginButton || !logoutButton ) {
       return;
