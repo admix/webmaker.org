@@ -11,7 +11,7 @@
 
   <title>{% block title %}{% endblock %} - {{ gettext("Mozilla Webmaker") }}</title>
   {% block css %}{% endblock %}
-  <link href="http://mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet">
+  <link href="https://mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ loginAPI }}/css/nav.css">
   <link rel="stylesheet" href="/css/style.css">
 
@@ -20,10 +20,10 @@
   <link rel="icon" type="image/png" href="/img/favicon.ico">
 
   <!-- For JS error tracking purposes -->
-  <script src="/js/pages/error-track.js" async></script>
+  <script src="/js/pages/layout.js" async></script>
 </head>
 
-<body id="{{ page }}" {% if view %}class="{{ view }}"{% endif %} data-endpoint="{{ makeEndpont }}">
+<body id="{{ page }}" {% if view %}class="{{ view }}"{% endif %} data-endpoint="{{ makeEndpoint }}">
 
 <div id="browser-warning">
   <p>{{ gettext("browserUpgradeWarning") | safe }}</p>
@@ -176,7 +176,6 @@
   <div class="mobile"></div>
 </div>
 
-<!--<script type="application/json" id="block-cta" src="/js/pages/block-cta.json" async></script>-->
 <script type="application/json" id="block-cta">
 {% block CTA %}
     [{

@@ -79,19 +79,6 @@ require("./lib/makeapi")({
   }
 });
 
-
-/*
-middleware.addCSP({ //added CSP
-    detailsHost: env.get("WEBMAKERORG"),
-    profileHost: env.get("PROFILE_URL")
-  }),
-  //middleware.removeCSP,
-
-  */
-
-
-
-
 var routes = require("./routes");
 
 nunjucksEnv.express(app);
@@ -243,7 +230,8 @@ app.use(express.static(tmpDir));
 // This just uses nunjucks-dev for now -- middleware to handle compiling templates in progress
 app.use("/views", express.static(path.join(__dirname, "views")));
 
-app.use(middleware.addCSP()); //adding Content Security Policy (CSP) to webmaker.org
+//adding Content Security Policy (CSP) to webmaker.org
+app.use(middleware.addCSP());
 
 app.use(app.router);
 // We've run out of known routes, 404
